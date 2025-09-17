@@ -24,8 +24,32 @@ double BitcoinExchange::stringToDouble(const std::string &str) {
     return value;
 }
 
+std::string BitcoinExchange::findDataFile() {
+    DIR* dir = opendir(".");
+    if (dir == NULL) {
+        std::cerr << "Failed to open current directory" << std::endl;
+        return "";
+    }
+    struct dirent* entry;
+    std::string firstDataFile;
+    while((entry = readdir(dir)) != NULL) {
+        std::string fileName = entry->d_name;
+        if (fileName.length() > 4 && fileName.substr(fileName.length() - 4) == ".csv") {
+            firstDataFile = fileName;
+            break;
+        }
+    }
+    closedir(dir);
+    return firstDataFile;
+}
+
 void BitcoinExchange::loadDataBase() {
-    std::ifstream file("data.csv");
+    std::string dataFile = findDataFile();
+    std::ifstream file(dataFile.c_str());
+    if (dataFile.empty()) {
+        std::cerr << "No .csv file found in the current directory" << std::endl;
+        return;
+    }
     if (!file.is_open()) {
         std::cerr << "Error: Could not open data file." << std::endl;
         return;
@@ -150,13 +174,21 @@ bool BitcoinExchange::parseInputFile(const std::string &inputFile) {
             if (!dateCheck(date))
                 continue;
             double value = myStod(valueString);
+            if (_dataBase.empty()) {
+                std::cerr << "Error: Database is empty." << std::endl;
+                continue;
+            }
             std::map<std::string, double>::iterator it = _dataBase.lower_bound(date);
-            if (it == _dataBase.end() || it->first > date) {
-                if (it != _dataBase.begin())
-                    --it;
-                else {
-                    std::cerr << "Error: No data available for date '" << date << "'." << std::endl;
-                    continue;
+            if (it == _dataBase.end()) {
+                //Date is after the last date in the BD use the last entry
+                it = _dataBase.end();
+                --it;
+            } else if (it->first > date) {
+                //Date is not found and lower_bound points to the first greater date
+                if (it == _dataBase.begin()) {
+                    //Date is before the first date in DB, use the first entry
+                } else {
+                    --it; // Use the closest lower date
                 }
             }
             std::cout << date << " -> " << std::fixed << std::setprecision(2)

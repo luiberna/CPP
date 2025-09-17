@@ -6,7 +6,7 @@
 #    By: luiberna <luiberna@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/27 12:32:15 by luiberna          #+#    #+#              #
-#    Updated: 2025/08/28 01:44:23 by luiberna         ###   ########.fr        #
+#    Updated: 2025/09/17 09:00:59 by luiberna         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ NAME = PmergeMe
 
 SRCS = main.cpp PmergeMe.cpp
 
-CC = g++
+CXX = c++
 
 OBJS = $(SRCS:.cpp=.o)
 
@@ -31,7 +31,7 @@ all: $(NAME)
 
 $(NAME): $(OBJS)
 	@echo "$(GREEN)Compiling $(NAME)...$(RESET)"
-	@$(CC) $(CPPFLAGS) $(OBJS) -o $(NAME)
+	@$(CXX) $(CPPFLAGS) $(OBJS) -o $(NAME)
 	@echo "$(GREEN)$(NAME) compiled successfully!$(RESET)"
 
 clean:

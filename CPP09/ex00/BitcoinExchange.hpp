@@ -9,6 +9,7 @@
 #include <iomanip>
 #include <fstream>
 #include <iterator>
+#include <dirent.h>
 
 class BitcoinExchange {
     public:
@@ -24,6 +25,7 @@ class BitcoinExchange {
         int myStoi(const std::string &str);
         double myStod(const std::string &str);
         std::string myStrTrim(const std::string &str);
+        std::string findDataFile();
     private:
         std::map<std::string, double> _dataBase;
         //Helper
