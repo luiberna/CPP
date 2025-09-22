@@ -18,17 +18,17 @@ class BitcoinExchange {
         BitcoinExchange &operator=(const BitcoinExchange &other);
         ~BitcoinExchange();
         //Methods
-        void loadDataBase();
+        bool loadDataBase();
         void execute(const std::string &inputFile);
         bool parseInputFile(const std::string &inputFile);
         bool dateCheck(const std::string &date);
         int myStoi(const std::string &str);
         double myStod(const std::string &str);
         std::string myStrTrim(const std::string &str);
-        std::string findDataFile();
     private:
         std::map<std::string, double> _dataBase;
         //Helper
+        std::string _inputFileName;
         double stringToDouble(const std::string &str);
 
     

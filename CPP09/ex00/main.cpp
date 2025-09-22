@@ -7,8 +7,14 @@ int main(int argc, char **argv) {
         return 1;
     }
     std::string inputFile = argv[1];
+    if (inputFile == "data.csv")
+    {
+        std::cerr << "Error: input file cannot be the database, nice try" << std::endl;
+        return 1;
+    }
     BitcoinExchange exchange;
-    exchange.loadDataBase();
+    if (!exchange.loadDataBase())
+        return 1;
     exchange.execute(inputFile);
     return 0;
 }

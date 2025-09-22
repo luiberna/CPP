@@ -24,46 +24,24 @@ double BitcoinExchange::stringToDouble(const std::string &str) {
     return value;
 }
 
-std::string BitcoinExchange::findDataFile() {
-    DIR* dir = opendir(".");
-    if (dir == NULL) {
-        std::cerr << "Failed to open current directory" << std::endl;
-        return "";
-    }
-    struct dirent* entry;
-    std::string firstDataFile;
-    while((entry = readdir(dir)) != NULL) {
-        std::string fileName = entry->d_name;
-        if (fileName.length() > 4 && fileName.substr(fileName.length() - 4) == ".csv") {
-            firstDataFile = fileName;
-            break;
-        }
-    }
-    closedir(dir);
-    return firstDataFile;
-}
-
-void BitcoinExchange::loadDataBase() {
-    std::string dataFile = findDataFile();
-    std::ifstream file(dataFile.c_str());
-    if (dataFile.empty()) {
-        std::cerr << "No .csv file found in the current directory" << std::endl;
-        return;
-    }
+bool BitcoinExchange::loadDataBase() {
+    std::ifstream file("data.csv");
     if (!file.is_open()) {
-        std::cerr << "Error: Could not open data file." << std::endl;
-        return;
+        std::cerr << "Error: Could not open data.csv file." << std::endl;
+        return false;
     }
     std::string line;
+    std::getline(file, line); //Skip header line
     while (std::getline(file, line)) {
-        if (line != "date,exchange_rate") {
-            std::string date = line.substr(0, line.find(','));
-            std::string rateString = line.substr(line.find(',') + 1);
-            double rate = stringToDouble(rateString);
-            _dataBase[date] = rate;
-        }
+        if (line.empty())
+            continue;
+        std::string date = line.substr(0, line.find(','));
+        std::string rateString = line.substr(line.find(',') + 1);
+        double rate = stringToDouble(rateString);
+        _dataBase[date] = rate;
     }
     file.close();
+    return true;
 }
 
 int BitcoinExchange::myStoi(const std::string &str) {
